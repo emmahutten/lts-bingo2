@@ -1,2 +1,2 @@
-# lts-bingo2
+# ltg-bingo2
 LTG Bingo 2
