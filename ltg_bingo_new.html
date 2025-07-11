@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LTG Bingo</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #ff9eb5 0%, #ffc0cb 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 30px;
+            color: #333;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        h1::before,
+        h1::after {
+            content: '🖐️';
+            position: absolute;
+            font-size: 0.8em;
+            top: -10px;
+            animation: wave 2s infinite;
+        }
+
+        h1::before {
+            left: -60px;
+            animation-delay: 0s;
+        }
+
+        h1::after {
+            right: -60px;
+            animation-delay: 1s;
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(20deg); }
+            75% { transform: rotate(-20deg); }
+        }
+
+        .bingo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3px;
+            border: 3px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .bingo-cell {
+            background-color: #fadadd;
+            border: 2px solid #333;
+            padding: 15px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
+        }
+
+        .bingo-cell:hover {
+            background-color: #f0c0c8;
+            transform: scale(1.02);
+        }
+
+        .bingo-cell.selected {
+            background-color: #90EE90;
+            color: #000;
+            transform: scale(0.98);
+        }
+
+        .bingo-cell.selected:hover {
+            background-color: #7FDD7F;
+        }
+
+        .rules {
+            background-color: #f8f8f8;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #ff9eb5;
+        }
+
+        .rules h2 {
+            margin-top: 0;
+            color: #333;
+            font-size: 1.5em;
+        }
+
+        .rules ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .rules li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ff6b6b;
+            animation: confetti-fall 3s linear infinite;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .confetti:nth-child(odd) {
+            background: #4ecdc4;
+            animation-delay: 0.5s;
+        }
+
+        .confetti:nth-child(3n) {
+            background: #45b7d1;
+            animation-delay: 1s;
+        }
+
+        .confetti:nth-child(4n) {
+            background: #f9ca24;
+            animation-delay: 1.5s;
+        }
+
+        .confetti:nth-child(5n) {
+            background: #6c5ce7;
+            animation-delay: 2s;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .celebration {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+            text-align: center;
+            animation: celebration-popup 0.5s ease-out;
+        }
+
+        .celebration h2 {
+            color: #ff6b6b;
+            font-size: 2.5em;
+            margin: 0;
+            animation: bounce 1s infinite;
+        }
+
+        .celebration p {
+            color: #333;
+            font-size: 1.2em;
+            margin: 10px 0 0 0;
+        }
+
+        @keyframes celebration-popup {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .bingo-cell {
+                font-size: 12px;
+                padding: 10px;
+                min-height: 60px;
+            }
+
+            .celebration h2 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>LTG bingo</h1>
+        
+        <div class="bingo-grid">
+            <div class="bingo-cell" onclick="toggleCell(this)">
+                Neem een shotje zonder je handen te gebruiken
+            </div>
+            <div class="bingo-cell" onclick="toggleCell(this)">
+                Bedenk een handshake met een vreemde
+            </div>
+            <div class="bingo-cell" onclick="toggleCell(this)">
+                Doe steen-papier-schaar met een vreemde
+            </div>
+            <div class="bingo-cell" onclick="toggleCell(this)">
+                Geef 3 random mensen een compliment
+            </div>
+            <div class="bingo-cell" onclick="toggleCell(this)">
+                Vraag aan een vreemde waar zijn/haar outfit van is
+            </div>
+            <div class="bingo-cell" onclick="toggleCell(this)">
+                Flirt met iemand achter de bar
+            </div>
+            <div class="bingo-cell" onclick="toggleCell(this)">
+                Doe een in sync dansje met minimaal 3 anderen
+            </div>
+            <div class="bingo-cell" onclick="toggleCell(this)">
+                Neem het sterktste shotje van de club met een LTG'er
+            </div>
+            <div class="bingo-cell" onclick="toggleCell(this)">
+                Vraag een vreemde om hun favoriete herinnering van die dag
+            </div>
+            <div class="bingo-cell" onclick="toggleCell(this)">
+                Ga op de foto met 3 random mensen
+            </div>
+            <div class="bingo-cell" onclick="toggleCell(this)">
+                Laat iemand anders een drankje voor je kiezen en drink het op
+            </div>
+            <div class="bingo-cell" onclick="toggleCell(this)">
+                Regel een gratis condoom
+            </div>
+        </div>
+        
+        <div class="rules">
+            <h2>Regels</h2>
+            <ul>
+                <li>Maximaal vier afstrepen per bar</li>
+                <li>Minimaal één LTG'er aanwezig om goed te keuren</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let confettiInterval;
+        let celebrationElement;
+
+        function toggleCell(cell) {
+            cell.classList.toggle('selected');
+            checkForBingo();
+        }
+
+        function checkForBingo() {
+            const allCells = document.querySelectorAll('.bingo-cell');
+            const allSelected = Array.from(allCells).every(cell => cell.classList.contains('selected'));
+            
+            if (allSelected) {
+                showCelebration();
+            } else {
+                hideCelebration();
+            }
+        }
+
+        function showCelebration() {
+            // Create celebration popup
+            celebrationElement = document.createElement('div');
+            celebrationElement.className = 'celebration';
+            celebrationElement.innerHTML = `
+                <h2>🎉 BINGO! 🎉</h2>
+                <p>Alle uitdagingen voltooid!</p>
+            `;
+            document.body.appendChild(celebrationElement);
+
+            // Start confetti
+            startConfetti();
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                hideCelebration();
+            }, 5000);
+        }
+
+        function hideCelebration() {
+            if (celebrationElement) {
+                celebrationElement.remove();
+                celebrationElement = null;
+            }
+            stopConfetti();
+        }
+
+        function startConfetti() {
+            // Clear any existing confetti
+            stopConfetti();
+            
+            confettiInterval = setInterval(() => {
+                for (let i = 0; i < 3; i++) {
+                    createConfetti();
+                }
+            }, 100);
+        }
+
+        function stopConfetti() {
+            if (confettiInterval) {
+                clearInterval(confettiInterval);
+                confettiInterval = null;
+            }
+            
+            // Remove existing confetti
+            const existingConfetti = document.querySelectorAll('.confetti');
+            existingConfetti.forEach(confetti => confetti.remove());
+        }
+
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            confetti.style.animationDelay = Math.random() * 2 + 's';
+            
+            document.body.appendChild(confetti);
+            
+            // Remove confetti after animation
+            setTimeout(() => {
+                confetti.remove();
+            }, 5000);
+        }
+
+        // Allow clicking on celebration to close it
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.celebration')) {
+                hideCelebration();
+            }
+        });
+    </script>
+</body>
+</html>
